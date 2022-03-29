@@ -24,7 +24,6 @@ wn.title("Epidemic Model")
 
 population = 50
 vaccinated = 5
-vaccine_protection = 0
 infected = 1
 infection_distance = 30
 population_spread = 15   #25 max
