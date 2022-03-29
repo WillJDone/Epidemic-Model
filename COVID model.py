@@ -44,6 +44,7 @@ class Ball(turtle.Turtle):
         self.penup()
         self.speed(0)
         self.goto(rand(-9,10)*population_spread,rand(-9,10)*population_spread)
+        self.infection_time = 0
         
 
 
@@ -91,17 +92,19 @@ for x in range(simulation_cycles):
                             k.color("red")
                             infected += 1
                             susceptible -= 1    
-                if rand(1,1/recovery_chance) == 1 and x >= min_recovery_time:
+                if rand(1,1/recovery_chance) == 1 and j.infection_time >= min_recovery_time:
                             j.color("blue")
                             recovered += 1
                             infected -= 1
-    print(infected,susceptible)
+                j.infection_time += 1
+    
      
     infected_log.append(infected)
     susceptible_log.append(susceptible)
     recovered_log.append(recovered)
     sim_log.append(sim_log[-1] + 1)
-    print("cycle:",sim_log[-1])              
+    print("cycle:",sim_log[-1])
+    print("S =",susceptible,"I =",infected,"R =",recovered)
 
 plt.plot(sim_log,infected_log,label = "infected",color = "red")
 plt.plot(sim_log,susceptible_log,label = "susceptible",color = "green")
