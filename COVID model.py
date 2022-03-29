@@ -5,6 +5,13 @@ Created on Tue Mar 29 13:33:49 2022
 @author: Lox Tyrrell
 """
 
+# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 29 13:33:49 2022
+@author: Lox Tyrrell
+"""
+
 import turtle
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,17 +22,18 @@ wn = turtle.Screen()
 wn.bgcolor("black")
 wn.title("Epidemic Model")
 
-population = 100
-vaccinated = 80
-vaccine_protection = 90
-infected = 5
+population = 50
+vaccinated = 5
+vaccine_protection = 0
+infected = 1
 infection_distance = 30
-population_spread = 20   #25 max
+population_spread = 15   #25 max
 simulation_cycles = 20
 recovery_chance = 1/5    # fractions only
-min_recovery_time = 2
+min_recovery_time = 5
 distance_per_cycle = 10
 movement_speed = 0     # 0 = max speed
+vaccine_rollout = 5
 
 
 
@@ -50,6 +58,7 @@ class Ball(turtle.Turtle):
 
 P=[]
 recovered = 0
+need_vaccine = vaccinated
 
 susceptible = population - infected
 
@@ -70,11 +79,6 @@ for i in range(infected):
     i = Ball()
     P.append(i)
     i.color("red")
-    
-for i in range(vaccinated):
-    i = Ball()
-    P.append(i)
-    i.color("yellow")
 
 for x in range(simulation_cycles):
     for i in P:
@@ -97,7 +101,11 @@ for x in range(simulation_cycles):
                             recovered += 1
                             infected -= 1
                 j.infection_time += 1
-    
+    if x > vaccine_rollout and need_vaccine>0:
+        for i in P:
+            if i.color() == ("green","green") and need_vaccine > 0:
+             i.color("yellow")
+             need_vaccine -= 1
      
     infected_log.append(infected)
     susceptible_log.append(susceptible)
@@ -111,7 +119,3 @@ plt.plot(sim_log,susceptible_log,label = "susceptible",color = "green")
 plt.plot(sim_log,recovered_log,label = "recovered", color = "blue")
 plt.legend()
 plt.show()
-
-
-
-wn.mainloop()
