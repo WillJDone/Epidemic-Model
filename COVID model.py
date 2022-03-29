@@ -53,6 +53,7 @@ class Ball(turtle.Turtle):
         self.speed(0)
         self.goto(rand(-9,10)*population_spread,rand(-9,10)*population_spread)
         self.infection_time = 0
+        self.immunity = 0
         
 
 
@@ -92,19 +93,29 @@ for x in range(simulation_cycles):
                       infected += 1
                       susceptible -= 1
                     if k.color() == ("yellow","yellow") and (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2:
-                        if decision(1-vaccine_protection):
+                        if decision(1-k.immunity):
                             k.color("red")
                             infected += 1
-                            susceptible -= 1    
+                            susceptible -= 1  
+                    if k.color() == ("blue","blue") and (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2:
+                        if decision(1-k.immunity):
+                            k.color("red")
+                            infected += 1
+                            susceptible -= 1
+                            k.infected_time = 0
                 if rand(1,1/recovery_chance) == 1 and j.infection_time >= min_recovery_time:
                             j.color("blue")
+                            j.immunity = 0.9
                             recovered += 1
                             infected -= 1
                 j.infection_time += 1
-    if x > vaccine_rollout and need_vaccine>0:
+                j.immunity -= 0.01
+                
+    if x >= vaccine_rollout and need_vaccine > 0:
         for i in P:
             if i.color() == ("green","green") and need_vaccine > 0:
              i.color("yellow")
+             i.immunity = 0.9
              need_vaccine -= 1
      
     infected_log.append(infected)
