@@ -151,7 +151,7 @@ for x in range(simulation_cycles):
                             if j.vaccinated:
                                 v -= 1
                 j.infected_time += 1
-                if j.immunity < 0: 
+                if j.immunity > 0: 
                     j.immunity -= Immunity_decrease_per_cycle
                 
     if x >= vaccine_rollout and need_vaccine > 0:
