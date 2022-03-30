@@ -142,7 +142,7 @@ for x in range(simulation_cycles):
             
     if x >= vaccine_rollout and need_vaccine > 0:
         for i in P:
-            if i.color() == ("green","green") or i.color() == ("blue","blue") and need_vaccine > 0:
+            if (i.color() == ("green","green") or i.color() == ("blue","blue")) and need_vaccine > 0:
                 i.color("yellow")
                 i.immunity = Immunity_after_vaccination
                 i.vaccinated = True
