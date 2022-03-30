@@ -8,42 +8,47 @@ wn.bgcolor("black")
 wn.title("Epidemic Model")
 
 def decision(probability):    # returns true or false based on probability
-    return random.random() < probability
+    return random.random() < probability #random.random() prints a random floating point value between 0 and 1
 
-def rand(x,y): # returns random number between x and y
+def rand(x,y): # returns random number between x and y-1
     return np.random.randint(x,y)
 
 #vaccines
 vaccinated = 150
 need_vaccine = vaccinated
-vaccine_rollout = 10
+vaccine_rollout = 30
 v = 0
 
 #population stats
-population = 170
+population = 200
 infected = 20
-population_spread = 20  #25 max
 Dead = 0
 recovered = 0
-susceptible = population - infected - Dead
+susceptible = population - infected
 
 #simulation parameters
-simulation_cycles = 40
+simulation_cycles = 100
 movement_speed = 0     # 0 = max speed
 distance_per_cycle = 10
 Infected_arrival_chance = 0
 max_potential_infected_visitors = 10
+population_spread = 20  #25 max
 
 #covid stats
 infection_distance = 30
+infectiosness = 0.8 #probability of transmitting it if in range
 recovery_chance = 1/5    # fractions only
 min_recovery_time = 5
-Covid_mortality = 0.01
-Death_clock = rand(14,32)
+Covid_mortality = 0.02
+Mortality_after_infection = 0.001
+Mortality_after_vaccination = 0.0005
+Mortality_after_infection_and_vaccination = 0.0001
+Death_clock = rand(14,32) 
 Immunity_after_recovery = 0.7
 Immunity_after_vaccination = 0.92
 Immunity_after_infected_and_vaccinated = 0.97
-Immunity_decrease_per_cycle = 0.0
+Immunity_decrease_per_cycle = 0.002
+
 
 
 
@@ -59,7 +64,8 @@ class Ball(turtle.Turtle): #A ball represents a human in our simulation
         self.immunity = 0
         self.vaccinated = False
         self.times_infected = 0
-
+        self.infectiosness = infectiosness
+        self.mortality = 0
 
 P=[] #list containing all objects in simulation
 
@@ -85,7 +91,7 @@ for i in range(infected):
 
 for x in range(simulation_cycles):
     if decision(Infected_arrival_chance):
-        for z in range(rand(1,max_potential_infected_visitors + 1)):
+        for z in range(rand(1,max_potential_infected_visitors + 1)): 
             z = Ball()
             z.color("red")
             P.append(z)
@@ -97,23 +103,31 @@ for x in range(simulation_cycles):
     for j in P:
         if j.color() == ("red","red"):
                 for k in P:
-                    if k.color() == ("green","green") and (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2:
-                      k.color("red")
-                      infected += 1
-                      susceptible -= 1
-                    if k.color() == ("yellow","yellow") and (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2:
-                        if decision(1-k.immunity):
-                            k.color("red")
-                            infected += 1
-                            susceptible -= 1 
-                    if k.color() == ("blue","blue") and (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2:
-                        if decision(1-k.immunity):
-                            k.color("red")
-                            infected += 1
-                            susceptible -= 1
-                            k.infected_time = 0
+                    if k.color() == ("green","green") and (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2 and decision(k.infectiosness): 
+                          k.color("red")
+                          k.mortality = Mortality_after_infection
+                          infected += 1
+                          susceptible -= 1
+                    if k.color() == ("yellow","yellow") and (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2 and decision(k.infectiosness): 
+                            if decision(1-k.immunity):
+                                k.color("red")
+                                infected += 1
+                                susceptible -= 1 
+                                if k.times_infected == 0:
+                                    k.mortality = Mortality_after_vaccination
+                                else: 
+                                    k.mortality = Mortality_after_infection_and_vaccination
+                
+                    if k.color() == ("blue","blue") and (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2 and decision(k.infectiosness):
+                            if decision(1-k.immunity):
+                                k.color("red")
+                                k.mortality = Mortality_after_infection
+                                infected += 1
+                                susceptible -= 1
+                                k.infected_time = 0
+                                
                 if rand(1,1/recovery_chance) == 1 and j.infected_time >= min_recovery_time:
-                    if decision(1-Covid_mortality): 
+                    if decision(1-k.mortality): 
                             if j.vaccinated:
                                 j.color("yellow")
                             else:
@@ -134,12 +148,12 @@ for x in range(simulation_cycles):
                             population -= 1
                             infected -= 1
                             Dead += 1
+                            if j.vaccinated:
+                                v -= 1
                 j.infected_time += 1
                 if j.immunity < 0: 
                     j.immunity -= Immunity_decrease_per_cycle
                 
-
-            
     if x >= vaccine_rollout and need_vaccine > 0:
         for i in P:
             if (i.color() == ("green","green") or i.color() == ("blue","blue")) and need_vaccine > 0:
@@ -148,7 +162,7 @@ for x in range(simulation_cycles):
                 i.vaccinated = True
                 need_vaccine -= 1
                 v += 1
-     
+
     infected_log.append(infected)
     susceptible_log.append(susceptible)
     recovered_log.append(recovered)
