@@ -149,8 +149,8 @@ for x in range(simulation_cycles):
     print("S =",susceptible,"I =",infected,"R =",recovered, "P =", population, "D =", Dead)
 
 plt.plot(sim_log,infected_log,label = "infected",color = "red")
-#plt.plot(sim_log,susceptible_log,label = "susceptible",color = "green")
-#plt.plot(sim_log,recovered_log,label = "recovered", color = "blue")
+plt.plot(sim_log,susceptible_log,label = "susceptible",color = "green")
+plt.plot(sim_log,recovered_log,label = "recovered", color = "blue")
 plt.legend()
 plt.show()
 
