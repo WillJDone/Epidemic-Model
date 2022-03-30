@@ -1,53 +1,55 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Mar 29 13:33:49 2022
-
-@author: Lox Tyrrell
-"""
-
-# -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Mar 29 13:33:49 2022
-@author: Lox Tyrrell
-"""
-
 import turtle
 import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-
 wn = turtle.Screen()
 wn.bgcolor("black")
 wn.title("Epidemic Model")
 
-population = 50
-vaccinated = 5
-infected = 1
-infection_distance = 30
-population_spread = 15   #25 max
-simulation_cycles = 20
-recovery_chance = 1/5    # fractions only
-min_recovery_time = 5
-distance_per_cycle = 10
-movement_speed = 0     # 0 = max speed
-vaccine_rollout = 5
-
-
-
 def decision(probability):    # returns true or false based on probability
     return random.random() < probability
 
-def rand(x,y):
+def rand(x,y): # returns random number between x and y
     return np.random.randint(x,y)
 
+#vaccines
+vaccinated = 130
+vaccine_rollout = 10
 
-class Ball(turtle.Turtle):
+#population stats
+population = 150
+infected = 20
+population_spread = 10  #25 max
+Dead = 0
+recovered = 0
+need_vaccine = vaccinated 
+susceptible = population - infected - Dead
+
+#simulation parameters
+simulation_cycles = 100
+movement_speed = 0     # 0 = max speed
+distance_per_cycle = 10
+Infected_arrival_chance = 0.1
+max_potential_infected_visitors = 10
+
+#covid stats
+infection_distance = 30
+recovery_chance = 1/5    # fractions only
+min_recovery_time = 5
+Covid_mortality = 0.01
+Death_clock = rand(14,31)
+Immunity_after_recovery = 0.7
+Immunity_after_vaccination = 0.95
+Immunity_decrease_per_cycle = 0.0
+
+
+
+class Ball(turtle.Turtle): #A ball represents a human in our simulation
     def __init__(self):
         turtle.Turtle.__init__(self)
         self.shape("circle")
-        self.color("green")
+        self.color()
         self.penup()
         self.speed(0)
         self.goto(rand(-9,10)*population_spread,rand(-9,10)*population_spread)
@@ -56,11 +58,8 @@ class Ball(turtle.Turtle):
         
 
 
-P=[]
-recovered = 0
-need_vaccine = vaccinated
+P=[] #list containing all objects in simulation
 
-susceptible = population - infected
 
 infected_log = [infected]
 susceptible_log = [susceptible]
@@ -69,18 +68,28 @@ sim_log = [0]
 
 print(infected_log,susceptible_log)
 
-inf = infected
+
 
 for i in range(population-infected):
     i = Ball()
+    i.color("green")
     P.append(i)
 
 for i in range(infected):
     i = Ball()
-    P.append(i)
     i.color("red")
+    P.append(i)
+
+
 
 for x in range(simulation_cycles):
+    if decision(Infected_arrival_chance):
+        for z in range(rand(1,max_potential_infected_visitors + 1)):
+            z = Ball()
+            z.color("red")
+            P.append(z)
+            population += 1
+            infected += 1
     for i in P:
         i.speed(movement_speed)
         i.goto(i.xcor() + rand(-1,2)*distance_per_cycle,i.ycor() + rand(-1,2)*distance_per_cycle)
@@ -95,26 +104,41 @@ for x in range(simulation_cycles):
                         if decision(1-k.immunity):
                             k.color("red")
                             infected += 1
-                            susceptible -= 1  
+                            susceptible -= 1 
+                            need_vaccine += 1
                     if k.color() == ("blue","blue") and (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2:
                         if decision(1-k.immunity):
                             k.color("red")
                             infected += 1
                             susceptible -= 1
                             k.infected_time = 0
+                        
                 if rand(1,1/recovery_chance) == 1 and j.infection_time >= min_recovery_time:
+                    if decision(1-Covid_mortality):
                             j.color("blue")
-                            j.immunity = 0.9
+                            j.immunity = Immunity_after_recovery
                             recovered += 1
                             infected -= 1
+                        
+                    else: 
+                        if j.infection_time >= Death_clock:
+                            j.color("grey")
+                            j.speed(0)
+                            P.remove(j)
+                            population -= 1
+                            infected -= 1
+                            Dead += 1
                 j.infection_time += 1
-                j.immunity -= 0.01
+                if j.immunity < 0: 
+                    j.immunity -= Immunity_decrease_per_cycle
                 
+
+            
     if x >= vaccine_rollout and need_vaccine > 0:
         for i in P:
-            if i.color() == ("green","green") and need_vaccine > 0:
+            if i.color() == ("green","green") or i.color() == ("blue","blue") and need_vaccine > 0:
              i.color("yellow")
-             i.immunity = 0.9
+             i.immunity = Immunity_after_vaccination
              need_vaccine -= 1
      
     infected_log.append(infected)
@@ -122,10 +146,11 @@ for x in range(simulation_cycles):
     recovered_log.append(recovered)
     sim_log.append(sim_log[-1] + 1)
     print("cycle:",sim_log[-1])
-    print("S =",susceptible,"I =",infected,"R =",recovered)
+    print("S =",susceptible,"I =",infected,"R =",recovered, "P =", population, "D =", Dead)
 
 plt.plot(sim_log,infected_log,label = "infected",color = "red")
-plt.plot(sim_log,susceptible_log,label = "susceptible",color = "green")
-plt.plot(sim_log,recovered_log,label = "recovered", color = "blue")
+#plt.plot(sim_log,susceptible_log,label = "susceptible",color = "green")
+#plt.plot(sim_log,recovered_log,label = "recovered", color = "blue")
 plt.legend()
 plt.show()
+
