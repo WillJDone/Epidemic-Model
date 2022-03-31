@@ -14,20 +14,21 @@ def rand(x,y): # returns random number between x and y-1
     return np.random.randint(x,y)
 
 #vaccines
-vaccinated = 150
+vaccinated = 20
 need_vaccine = vaccinated
-vaccine_rollout = 30
+vaccine_development_time = 2
+vaccine_rollout_time = 10
 v = 0
 
 #population stats
-population = 200
-infected = 20
+population = 100
+infected = 10
 Dead = 0
-recovered = 0
+recovered = 0 
 susceptible = population - infected
 
 #simulation parameters
-simulation_cycles = 100
+simulation_cycles = 20
 movement_speed = 0     # 0 = max speed
 distance_per_cycle = 10
 Infected_arrival_chance = 0
@@ -43,7 +44,8 @@ Covid_mortality = 0.02
 Mortality_after_infection = 0.001
 Mortality_after_vaccination = 0.0005
 Mortality_after_infection_and_vaccination = 0.0001
-Death_clock = rand(14,32) 
+Death_clock = rand(14,32)
+Full_immunity_period = 50 
 Immunity_after_recovery = 0.7
 Immunity_after_vaccination = 0.92
 Immunity_after_infected_and_vaccinated = 0.97
@@ -51,6 +53,8 @@ Immunity_decrease_per_cycle = 0.002
 
 
 
+
+vaccinated_per_cycle = round(vaccinated/vaccine_rollout_time)
 
 class Ball(turtle.Turtle): #A ball represents a human in our simulation
     def __init__(self):
@@ -66,6 +70,7 @@ class Ball(turtle.Turtle): #A ball represents a human in our simulation
         self.times_infected = 0
         self.infectiosness = infectiosness
         self.mortality = 0
+        self.Full_immunity_period = 0
 
 P=[] #list containing all objects in simulation
 
@@ -75,7 +80,7 @@ susceptible_log = [susceptible]
 recovered_log = [0]
 sim_log = [0]
 
-print(infected_log,susceptible_log)
+print("Initial infected:",infected_log,"Population:",population)
 
 
 
@@ -118,20 +123,17 @@ for x in range(simulation_cycles):
                                 else: 
                                     k.mortality = Mortality_after_infection_and_vaccination
                 
-                    if k.color() == ("blue","blue") and (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2 and decision(k.infectiosness):
-                            if decision(1-k.immunity):
-                                k.color("red")
-                                k.mortality = Mortality_after_infection
-                                infected += 1
-                                susceptible -= 1
-                                k.infected_time = 0
-                                
+
                 if rand(1,1/recovery_chance) == 1 and j.infected_time >= min_recovery_time:
                     if decision(1-k.mortality): 
                             if j.vaccinated:
                                 j.color("yellow")
                             else:
-                                j.color("blue")
+                                if Full_immunity_period > 0:
+                                 j.color("blue")
+                                 j.Full_immunity_period = Full_immunity_period
+                                else:
+                                     j.color("green")
                             if j.times_infected > 0 and j.vaccinated:
                                 j.immunity = Immunity_after_infected_and_vaccinated
                             else:
@@ -153,14 +155,24 @@ for x in range(simulation_cycles):
                 j.infected_time += 1
                 if j.immunity > 0: 
                     j.immunity -= Immunity_decrease_per_cycle
-                
-    if x >= vaccine_rollout and need_vaccine > 0:
+    
+        if j.color() == ("blue","blue"):                
+                     if j.Full_immunity_period == 0:
+                            print("hey")
+                            j.color("green")
+                            susceptible += 1
+                            recovered -= 1                
+                     j.Full_immunity_period -= 1
+    
+    daily_need_vaccine = vaccinated_per_cycle              
+    if x >= vaccine_development_time and need_vaccine > 0:
         for i in P:
-            if (i.color() == ("green","green") or i.color() == ("blue","blue")) and need_vaccine > 0:
+            if i.color() == ("green","green") and need_vaccine > 0 and daily_need_vaccine > 0:
                 i.color("yellow")
                 i.immunity = Immunity_after_vaccination
                 i.vaccinated = True
                 need_vaccine -= 1
+                daily_need_vaccine -= 1
                 v += 1
 
     infected_log.append(infected)
@@ -176,3 +188,4 @@ plt.plot(sim_log,recovered_log,label = "recovered", color = "blue")
 plt.legend()
 plt.show()
 
+wn.mainloop()
