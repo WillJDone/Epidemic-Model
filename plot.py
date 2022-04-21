@@ -2,12 +2,16 @@
 """
 Created on Mon Apr 18 16:48:35 2022
 
-@author: dmall
+@author: qa21336
 """
 
 from matplotlib import pyplot as plt
 
 def plot(s_graph,i_graph,r_graph,d_graph,file):
+    """
+    If the user has decided to input a file name, the data of the frame of the 
+    graph animation is plotted and saved with the respective name as a pdf
+    """
     if file != None:
         fig = plt.figure()
         ax = plt.axes()
