@@ -5,7 +5,7 @@ $ git clone https://github.com/WillJDone/Epidemic-Model.git
 $ cd Epidemic-Model.git
 ```
 
-## Hexagonal grid aga=ent based model:
+## Hexagonal grid agaent based model:
 ### run program:
 ```
 $ python runsim.py
@@ -18,15 +18,15 @@ $ python runsim.py -h
 
 ### save animation to file
 ```
-$ python simulator.py --file_2=video.mp4
+$ python runsim.py --file_2=video.mp4
 ```
 
 ### save plot to file
 ```
-$ python simulator.py --file_1=image.pdf
+$ python runsim.py --file_1=image.pdf
 ```
 
 ### size of matrix
 ```
-$ python simulator.py --edge=10
+$ python runsim.py --edge=10
 ```
