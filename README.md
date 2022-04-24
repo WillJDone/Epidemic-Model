@@ -18,12 +18,12 @@ $ python runsim.py -h
 
 ### save animation to file
 ```
-$ python runsim.py --file_2=video.mp4
+$ python runsim.py --file_2=video
 ```
 
 ### save plot to file
 ```
-$ python runsim.py --file_1=image.pdf
+$ python runsim.py --file_1=image
 ```
 
 ### size of matrix

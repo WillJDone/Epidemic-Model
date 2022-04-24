@@ -64,20 +64,7 @@ class animation:
     
         ax2.set_xlim([-1, edge]) #set x axis limts
         ax2.set_ylim([-1, edge]) #set y axis limits
-        
-        #removing unnecessary axes properties for the grid
-        ax2.spines['top'].set_visible(False)
-        ax2.spines['right'].set_visible(False)
-        ax2.spines['bottom'].set_visible(False)
-        ax2.spines['left'].set_visible(False)
-        ax2.set_xticks([])
-        ax2.set_yticks([])
-        
-        # set properties of the axes for the SIRD graph
-        ax1.set_xlabel('Time /days')
-        ax1.set_ylabel('Number of people')
-        ax1.legend(frameon=False,loc='upper center')
-        
+                       
         #set properties of scatter for the grid
         s_scat = ax2.scatter(0,0, s= 85500*(1/edge)**2, c='blue', marker='H')
         i_scat = ax2.scatter(0,0, s= 85500*(1/edge)**2, c='red', marker='H')
@@ -97,7 +84,20 @@ class animation:
                              fargs = [time,s_line,i_line,r_line,
                              d_line,s_scat,i_scat,r_scat,d_scat,self.s_graph,
                              self.i_graph,self.r_graph,self.d_graph,self.s_grid,
-                             self.i_grid, self.r_grid, self.d_grid]) 
+                             self.i_grid, self.r_grid, self.d_grid])
+
+	  #removing unnecessary axes properties for the grid
+        ax2.spines['top'].set_visible(False)
+        ax2.spines['right'].set_visible(False)
+        ax2.spines['bottom'].set_visible(False)
+        ax2.spines['left'].set_visible(False)
+        ax2.set_xticks([])
+        ax2.set_yticks([])
+        
+        # set properties of the axes for the SIRD graph
+        ax1.set_xlabel('Time /days')
+        ax1.set_ylabel('Number of people')
+        ax1.legend(frameon=False,loc='upper center')
 
         if file != None:
             anim.save(file+'.gif', fps = 30) #save animation the file name if given
