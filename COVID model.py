@@ -326,3 +326,4 @@ def plot_graph(sim_log,infected_log,susceptible_log,recovered_log,vaccinated_log
 
 run_simulation()
 
+
