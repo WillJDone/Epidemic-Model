@@ -64,7 +64,7 @@ def move_all(pop_list,movement_speed,distance_per_cycle): # will cause all objec
 def cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,recovery_chance,min_recovery_time,min_death_time,Full_immunity_period,Immunity_after_recovery,Immunity_after_infected_and_vaccinated,j): # will either cause an individual to recover or die if the requirements for either are met
                         if j.survives == "undetermined":      #will decide whether an individual will survive if its survival is undetermined
                             j.survives = determine_survival(j)
-                        if j.survives == True: # will recover if individual does survive, has been infected longer than the minimum recovery time and the recovery chance outputs true
+                        if j.survives == True: # will recover if individual does survive, has been infected longer than the minimum recovery time and the random output based on recovery chance is true
                             if decision(recovery_chance) and j.infected_time >= min_recovery_time:
                                         if j.vaccinated:
                                             j.color("yellow")
@@ -95,14 +95,14 @@ def cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,reco
 
 
 
-def within_infection_distance(j,k,infection_distance):
+def within_infection_distance(j,k,infection_distance): # will output True if object j and k are within infection distance of eachother and ouput false if not
     if (j.xcor()-k.xcor())**2 + (j.ycor()-k.ycor())**2 < infection_distance**2:
         return True
     else:
         return False
   
     
-def lose_full_immunity(susceptible,recovered,j):
+def lose_full_immunity(susceptible,recovered,j): # will cause the full immunity period of any recovered individual to decrease by one each cycle and make them susceptible again once that hits 0
                 if j.color() == ("blue","blue"):                
                              if j.Full_immunity_period == 0:
                                     j.color("green")
@@ -113,9 +113,9 @@ def lose_full_immunity(susceptible,recovered,j):
             
 
 
-def infect_if_exposed(infected,susceptible,Mortality_after_infection,Mortality_after_vaccination,Mortality_after_infection_and_vaccination,infection_distance,j,k):
+def infect_if_exposed(infected,susceptible,Mortality_after_infection,Mortality_after_vaccination,Mortality_after_infection_and_vaccination,infection_distance,j,k): # will infect a susceptible individual if they are within infection distance of an infected individual and the random output based on infectiousness is true
                             
-                            if k.color() == ("green","green") and within_infection_distance(j,k,infection_distance) and decision(k.infectiosness): 
+                            if k.color() == ("green","green") and within_infection_distance(j,k,infection_distance) and decision(k.infectiosness): #infects non vaccinated
                                   k.color("red")                   
                                   k.mortality = Mortality_after_infection
                                   determine_survival(k)
@@ -123,7 +123,7 @@ def infect_if_exposed(infected,susceptible,Mortality_after_infection,Mortality_a
                                   susceptible -= 1
                                   
                                   
-                            if k.color() == ("yellow","yellow") and within_infection_distance(j,k,infection_distance) and decision(k.infectiosness): 
+                            if k.color() == ("yellow","yellow") and within_infection_distance(j,k,infection_distance) and decision(k.infectiosness): #infects vaccinated
                                     if decision(1-k.immunity):
                                         k.color("red")
                                         infected += 1
