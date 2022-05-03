@@ -185,7 +185,7 @@ def run_simulation():
     
     
     #population stats
-    population = 50
+    population = 100
     infected = 2
     dead = 0
     recovered = 0 
