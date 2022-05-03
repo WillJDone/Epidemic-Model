@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-def open_window():
+def open_window():    # opens an animation window in the turtle module titled "epidemic model"
     wn = turtle.Screen()
     wn.bgcolor("black")
     wn.title("Epidemic Model")
@@ -19,12 +19,12 @@ def rand(x,y): # returns random number between x and y-1
 
 
 
-def determine_survival(x):
+def determine_survival(x):      # determines whether an individual will survive based on mortality
         return decision(1-x.mortality)
 
 
 
-def generate_population(human,susceptible,infected):
+def generate_population(human,susceptible,infected): # will generate a population of susceptible and infected humans and return a list of the population
         P = []
         for i in range(susceptible):
             i = human()
@@ -41,7 +41,7 @@ def generate_population(human,susceptible,infected):
 
 
 
-def infected_visitors(population,infected,Infected_arrival_chance,max_potential_infected_visitors,pop_list,human):
+def infected_visitors(population,infected,Infected_arrival_chance,max_potential_infected_visitors,pop_list,human): # will cause a random number infected visitors to arrive every cycle based on the inputed variables
         if decision(Infected_arrival_chance):
             for z in range(rand(1,max_potential_infected_visitors + 1)): 
                 z = human()
@@ -53,7 +53,7 @@ def infected_visitors(population,infected,Infected_arrival_chance,max_potential_
   
     
   
-def move_all(pop_list,movement_speed,distance_per_cycle):
+def move_all(pop_list,movement_speed,distance_per_cycle): # will cause all objects in the population list to move the inputed distance at the inputed speed each cycle
         for i in pop_list:
             i.speed(movement_speed)
             i.goto(i.xcor() + rand(-1,2)*distance_per_cycle,i.ycor() + rand(-1,2)*distance_per_cycle)
@@ -61,10 +61,10 @@ def move_all(pop_list,movement_speed,distance_per_cycle):
 
 
 
-def cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,recovery_chance,min_recovery_time,min_death_time,Full_immunity_period,Immunity_after_recovery,Immunity_after_infected_and_vaccinated,j):
-                        if j.survives == "undetermined":
+def cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,recovery_chance,min_recovery_time,min_death_time,Full_immunity_period,Immunity_after_recovery,Immunity_after_infected_and_vaccinated,j): # will either cause an individual to recover or die if the requirements for either are met
+                        if j.survives == "undetermined":      #will decide whether an individual will survive if its survival is undetermined
                             j.survives = determine_survival(j)
-                        if j.survives == True:
+                        if j.survives == True: # will recover if individual does survive, has been infected longer than the minimum recovery time and the recovery chance outputs true
                             if decision(recovery_chance) and j.infected_time >= min_recovery_time:
                                         if j.vaccinated:
                                             j.color("yellow")
@@ -82,10 +82,9 @@ def cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,reco
                                         recovered += 1
                                         infected -= 1
                                 
-                        elif j.survives == False: 
+                        elif j.survives == False: # will kill individal if it does not survive and has been infected longer than the minimum death time
                                 if j.infected_time >= min_death_time:
                                     j.color("grey")
-                                    j.speed(0)
                                     pop_list.remove(j)
                                     population -= 1
                                     infected -= 1
