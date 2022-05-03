@@ -14,7 +14,7 @@ class animation:
     same figure. In total their are 8 lists of data: SIRD for each the grid
     and graph that are named appropriately. 
     """
-    def __init__(self,s_graph,i_graph,r_graph,d_graph,s_grid,i_grid,r_grid,d_grid,edge,file):
+    def __init__(self,s_graph,i_graph,r_graph,d_graph,s_grid,i_grid,r_grid,d_grid,edge,file, frame):
         self.s_graph = s_graph
         self.i_graph = i_graph
         self.r_graph = r_graph
@@ -24,11 +24,10 @@ class animation:
         self.r_grid = r_grid
         self.d_grid = d_grid
         self.edge = edge #this is the size of the matrix
-        self.hex_grid(self.s_grid, self.i_grid, self.r_grid, self.d_grid, self.edge)
         self.animate(self.s_graph,self.i_graph,self.r_graph,self.d_graph,
-                     self.s_grid, self.i_grid, self.r_grid, self.d_grid, self.edge,file)
+                     self.s_grid, self.i_grid, self.r_grid, self.d_grid, self.edge,file,frame)
         
-    def hex_grid(self,s_grid,i_grid,r_grid,d_grid,edge):
+    def hex_grid(s_grid,i_grid,r_grid,d_grid,edge):
         """
         This function creates offsets in the data to convert from square
         coordinates to hexagonal data for each: SIRD
@@ -54,17 +53,14 @@ class animation:
                 if round(d_grid[n][m][0] * 2 * (3**-0.5)) %2 == 0:
                     d_grid[n][m] = (d_grid[n][m][0], d_grid[n][m][1] + 0.5)       
             
-    def animate(self,s_graph,i_graph,r_graph,d_graph,s_data,i_data,r_data,d_data,edge,file):  
+    def animate(self,s_graph,i_graph,r_graph,d_graph,s_data,i_data,r_data,d_data,edge,file,frame):  
         """
         This function plots two separate axes on the same figure: ax1 is the
-        animation, a2 is the grid. Then the animation is made using
+        animation, ax2 is the grid. Then the animation is made using
         FuncAnimation
         """
         fig, (ax2, ax1) = plt.subplots(1, 2, figsize=(14,6.7)) #create figure
-    
-        ax2.set_xlim([-1, edge]) #set x axis limts
-        ax2.set_ylim([-1, edge]) #set y axis limits
-                       
+        
         #set properties of scatter for the grid
         s_scat = ax2.scatter(0,0, s= 85500*(1/edge)**2, c='blue', marker='H')
         i_scat = ax2.scatter(0,0, s= 85500*(1/edge)**2, c='red', marker='H')
@@ -80,13 +76,16 @@ class animation:
         d_line, = ax1.plot(time,d_graph, color='k', label='Died')
         
         # call FuncAnimation with relevant figure, function, frames and extra arguments 
-        anim = FuncAnimation(fig, self.update, len(s_graph), interval=10, 
+        anim = FuncAnimation(fig, self.update, int(len(s_graph)*frame), interval=10, 
                              fargs = [time,s_line,i_line,r_line,
                              d_line,s_scat,i_scat,r_scat,d_scat,self.s_graph,
                              self.i_graph,self.r_graph,self.d_graph,self.s_grid,
-                             self.i_grid, self.r_grid, self.d_grid])
-
-	  #removing unnecessary axes properties for the grid
+                             self.i_grid, self.r_grid, self.d_grid], repeat = False) 
+        
+        ax2.set_xlim([-1, edge]) #set x axis limts
+        ax2.set_ylim([-1, edge]) #set y axis limits
+        
+        #removing unnecessary axes properties for the grid
         ax2.spines['top'].set_visible(False)
         ax2.spines['right'].set_visible(False)
         ax2.spines['bottom'].set_visible(False)

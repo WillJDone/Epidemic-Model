@@ -67,8 +67,22 @@ class simulation:
         self.r_graph = [] #list containing number of recovered people on each day
         self.d_graph = [] #list containing number od dead people on each day
         self.form_matirx(self.edge) #this function starts the set up of the matrices
+        
+        animation.hex_grid(self.s_grid, self.i_grid, self.r_grid, self.d_grid, self.edge)
+        
+        # animation(self.s_graph,self.i_graph,self.r_graph,self.d_graph,
+        #                 self.s_grid, self.i_grid, self.r_grid, self.d_grid, self.edge, file_2, 1/4)
+        # animation(self.s_graph,self.i_graph,self.r_graph,self.d_graph,
+        #                 self.s_grid, self.i_grid, self.r_grid, self.d_grid, self.edge, file_2, 1/2)
+        # animation(self.s_graph,self.i_graph,self.r_graph,self.d_graph,
+        #                 self.s_grid, self.i_grid, self.r_grid, self.d_grid, self.edge, file_2, 3/4)
+        
+        #To end the animation at 0.25,0.5 and 0.75  through the epidemic uncomment lines 73-78.
+        # This was used to save the figures for the report writing
+        
         animation(self.s_graph,self.i_graph,self.r_graph,self.d_graph,
-                        self.s_grid, self.i_grid, self.r_grid, self.d_grid, self.edge, file_2)
+                        self.s_grid, self.i_grid, self.r_grid, self.d_grid, self.edge, file_2, 1)
+        
         plot(self.s_graph,self.i_graph,self.r_graph,self.d_graph,file_1)
          #animation in animation.py and plot in plot.py are called here once the sequence of
          # matrices are finished
