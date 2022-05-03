@@ -3,9 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-wn = turtle.Screen()
-wn.bgcolor("black")
-wn.title("Epidemic Model")
+def open_window():
+    wn = turtle.Screen()
+    wn.bgcolor("black")
+    wn.title("Epidemic Model")
+    return wn
 
 def decision(probability):    # returns true or false based on probability
     return random.random() < probability #random.random() prints a random floating point value between 0 and 1
@@ -59,7 +61,7 @@ def move_all(pop_list,movement_speed,distance_per_cycle):
 
 
 
-def cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,recovery_chance,min_recovery_time,Death_clock,Full_immunity_period,Immunity_after_recovery,Immunity_after_infected_and_vaccinated,j):
+def cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,recovery_chance,min_recovery_time,min_death_time,Full_immunity_period,Immunity_after_recovery,Immunity_after_infected_and_vaccinated,j):
                         if j.survives == "undetermined":
                             j.survives = determine_survival(j)
                         if j.survives == True:
@@ -81,7 +83,7 @@ def cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,reco
                                         infected -= 1
                                 
                         elif j.survives == False: 
-                                if j.infected_time >= Death_clock:
+                                if j.infected_time >= min_death_time:
                                     j.color("grey")
                                     j.speed(0)
                                     pop_list.remove(j)
@@ -205,12 +207,12 @@ def run_simulation():
     infectiosness = 0.8 #probability of transmitting it if in range
     recovery_chance = 1/3    
     min_recovery_time = 5
-    Covid_mortality = 0.5
+    Covid_mortality = 0.02
     Mortality_after_infection = 0.001
     Mortality_after_vaccination = 0.0005
     Mortality_after_infection_and_vaccination = 0.0001
-    Death_clock = 5
-    Full_immunity_period = 1 
+    min_death_time = 5
+    Full_immunity_period = 20 
     Immunity_after_recovery = 0.7
     Immunity_after_vaccination = 0.92
     Immunity_after_infected_and_vaccinated = 0.97
@@ -248,7 +250,7 @@ def run_simulation():
             self.Full_immunity_period = 0
             self.survives = "undetermined"
     
-    
+    wn = open_window()
     
     
 
@@ -278,7 +280,7 @@ def run_simulation():
                     for k in pop_list:
                         infected,susceptible = infect_if_exposed(infected,susceptible,Mortality_after_infection,Mortality_after_vaccination,Mortality_after_infection_and_vaccination,infection_distance,j,k)
                         
-                    pop_list,population,infected,recovered,dead,vaccinated_pop = cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,recovery_chance,min_recovery_time,Death_clock,Full_immunity_period,Immunity_after_recovery,Immunity_after_infected_and_vaccinated,j)              
+                    pop_list,population,infected,recovered,dead,vaccinated_pop = cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,recovery_chance,min_recovery_time,min_death_time,Full_immunity_period,Immunity_after_recovery,Immunity_after_infected_and_vaccinated,j)              
                                     
                     
                                     
@@ -303,6 +305,7 @@ def run_simulation():
         
         print_data(susceptible,infected,recovered,population,dead,vaccinated_pop,sim_log)
     plot_graph(sim_log, infected_log, susceptible_log, recovered_log,vaccinated_log,dead_log)
+    wn.mainloop()
     
     
     
@@ -323,4 +326,3 @@ def plot_graph(sim_log,infected_log,susceptible_log,recovered_log,vaccinated_log
 
 run_simulation()
 
-wn.mainloop()
