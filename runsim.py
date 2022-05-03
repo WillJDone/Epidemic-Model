@@ -8,6 +8,7 @@ Created on Tue Mar 22 13:26:22 2022
 
 import argparse
 from simulation import simulation
+import billiard_model
 
 def main(*args):
     """
@@ -40,3 +41,5 @@ def main(*args):
     #call the simulation class in simulation.py with respective inputs
     
 main()
+
+billiard_model.run_simulation()
