@@ -4,12 +4,11 @@ Clone repo:
 $ git clone https://github.com/WillJDone/Epidemic-Model.git
 $ cd Epidemic-Model.git
 ```
-
-## Hexagonal grid agaent based model:
-### run program:
+## run program (the hexagonal grid based model and the billiard based model):
 ```
 $ python runsim.py
 ```
+## Use of CLI (only for hexagonal grid agaent based model):
 
 ### show all command line options:
 ```
