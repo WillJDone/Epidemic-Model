@@ -29,7 +29,7 @@ def main(*args):
     parser.add_argument('--death', metavar='P', type=float, default=0.2,
                         help='the chance an infected person dies')
     parser.add_argument('--edge', metavar='N', type=int, default=40,
-                        help='size of side of square matrix')
+                        help='size of each side of the hexagonal grid')
     parser.add_argument('--file_1', metavar='N', type=str, default=None,
                         help='Filename to be saved of the SIRD graph of the last day')
     parser.add_argument('--file_2', metavar='N', type=str, default=None,
