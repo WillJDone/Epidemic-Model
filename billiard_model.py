@@ -116,7 +116,7 @@ def lose_full_immunity(susceptible,recovered,j): # will cause the full immunity 
 def infect_if_exposed(infected,susceptible,Mortality_after_infection,Mortality_after_vaccination,Mortality_after_infection_and_vaccination,infection_distance,j,k): # will infect a susceptible individual if they are within infection distance of an infected individual and the random output based on infectiousness is true
                             
                             if k.color() == ("green","green") and within_infection_distance(j,k,infection_distance) and decision(k.infectiosness): #infects non vaccinated
-                                if decision(k.immunity):
+                                if decision(1-k.immunity):
                                   k.color("red")                   
                                   k.mortality = Mortality_after_infection
                                   determine_survival(k)
