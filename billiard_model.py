@@ -299,13 +299,14 @@ def run_simulation():  # runs the entire simulation
         move_all(pop_list,movement_speed,distance_per_cycle)                                                                                                            
                  
         for j in pop_list:  # runs through each member of population
+            if j.color() == ("red","red"):
                     for k in pop_list:   # compares each infected individual to each member of the population
                         infected,susceptible = infect_if_exposed(infected,susceptible,Mortality_after_infection,Mortality_after_vaccination,Mortality_after_infection_and_vaccination,infection_distance,j,k)
                         
                     pop_list,population,infected,recovered,dead,vaccinated_pop = cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,recovery_chance,min_recovery_time,min_death_time,Full_immunity_period,Immunity_after_recovery,Immunity_after_infected_and_vaccinated,j)              
                     update_infected_stats(j,Immunity_decrease_per_cycle)
                     
-                    susceptible,recovered = lose_full_immunity(susceptible,recovered,j)
+            susceptible,recovered = lose_full_immunity(susceptible,recovered,j)
         
         
         vaccinated_pop,need_vaccine = vaccinate_pop(vaccinated_pop,need_vaccine,Total_to_be_vaccinated,vaccine_rollout_time,vaccine_development_time,cycle,pop_list,Immunity_after_vaccination)
@@ -314,4 +315,3 @@ def run_simulation():  # runs the entire simulation
         
     plot_graph(sim_log, infected_log, susceptible_log, recovered_log,vaccinated_log,dead_log)
     wn.mainloop()  # causes program to only terminate when window closes
-    
