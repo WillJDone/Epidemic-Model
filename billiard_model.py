@@ -64,6 +64,7 @@ def move_all(pop_list,movement_speed,distance_per_cycle): # will cause all objec
 def cure_or_kill(pop_list,population,infected,recovered,dead,vaccinated_pop,recovery_chance,min_recovery_time,min_death_time,Full_immunity_period,Immunity_after_recovery,Immunity_after_infected_and_vaccinated,j): # will either cause an individual to recover or die if the requirements for either are met
                         if j.survives == "undetermined":     
                             j.survives = determine_survival(j)
+                        
                         if j.survives == True: # will recover if individual does survive, has been infected longer than the minimum recovery time and the random output based on recovery chance is true
                             if decision(recovery_chance) and j.infected_time >= min_recovery_time:
                                         if j.vaccinated:
@@ -118,7 +119,6 @@ def infect_if_exposed(infected,susceptible,Mortality_after_infection,Mortality_a
                             if k.color() == ("green","green") and within_infection_distance(j,k,infection_distance) and decision(k.infectiosness): #infects non vaccinated
                                 if decision(1-k.immunity):
                                   k.color("red")                   
-                                  k.mortality = Mortality_after_infection
                                   determine_survival(k)
                                   infected += 1
                                   susceptible -= 1
@@ -129,11 +129,7 @@ def infect_if_exposed(infected,susceptible,Mortality_after_infection,Mortality_a
                                         k.color("red")
                                         infected += 1
                                         susceptible -= 1 
-                                        if k.times_infected == 0:
-                                            k.mortality = Mortality_after_vaccination
-                                        else: 
-                                            k.mortality = Mortality_after_infection_and_vaccination
-                                        determine_survival(k)
+
                             return infected,susceptible            
             
 def vaccinate(i,Immunity_after_vaccination): # will vaccinate an individual by turning it yellow and increasing its immunity
@@ -186,13 +182,15 @@ def plot_graph(sim_log,infected_log,susceptible_log,recovered_log,vaccinated_log
     plt.plot(sim_log,recovered_log,label = "recovered", color = "blue")
     plt.plot(sim_log,vaccinated_log,label = "vaccinated", color = "yellow")
     plt.plot(sim_log,dead_log,label = "dead", color = "black")
+    plt.xlabel("Time / Days")
+    plt.ylabel("Number of days")
     plt.legend()
     plt.show() 
     
   
     
   
-    
+   
   
     
   
@@ -207,15 +205,15 @@ def plot_graph(sim_log,infected_log,susceptible_log,recovered_log,vaccinated_log
 def run_simulation():  # runs the entire simulation
     #vaccines
     
-    need_vaccine = 10                    # the number of people who will be eventually vaccinated or number of available vaccines
+    need_vaccine = 5                 # the number of people who will be eventually vaccinated or number of available vaccines
     vaccine_development_time = 2         # the number of cycles before individuals get vaccinated
-    vaccine_rollout_time = 10            # the time over which all vaccines are distributed
+    vaccine_rollout_time = 2           # the time over which all vaccines are distributed
     
     
     
     #population stats
     population = 100                      # the initial population
-    infected = 2                          # initial number of infected people
+    infected = 5                         # initial number of infected people
     population_spread = 15                # multiplier the distance over which individuals are able to spawn, 25 max for individuals to be remain within animation window
      
     
@@ -226,7 +224,7 @@ def run_simulation():  # runs the entire simulation
     simulation_cycles = 20                # number of times each individual will move once in simulation
     movement_speed = 0                    # 0 = max speed
     distance_per_cycle = 10               # max distance moved by individuals each cycle
-    Infected_arrival_chance = 0.01        # the probability that each cycle, additional infected individuals will be added the population
+    Infected_arrival_chance = 0           # the probability that each cycle, additional infected individuals will be added the population
     max_potential_infected_visitors = 10  # the maximum number of infected individuals 
     
     
@@ -234,8 +232,8 @@ def run_simulation():  # runs the entire simulation
     infection_distance = 30                                  # distance that susceptible individuals have to be within an infected one in order to get infected
     infectiosness = 0.8                                      # probability of transmitting virus if in range
     recovery_chance = 1/3                                    # the chance that an infected person will recover each cycle
-    min_recovery_time = 5                                    # mininum number of cycles after infection that an infected individual can recover
-    Covid_mortality = 0.02                                   # probability an infected individual will die
+    min_recovery_time = 4                                    # mininum number of cycles after infection that an infected individual can recover
+    Covid_mortality = 0.1                                  # probability an infected individual will die
     Mortality_after_infection = 0.001                        # probability a recovered individual will die when reinfected
     Mortality_after_vaccination = 0.0005                     # probability a vaccinated infected individual will die
     Mortality_after_infection_and_vaccination = 0.0001       # probability a recovered vaccinated individual will die after reinfection
@@ -302,7 +300,7 @@ def run_simulation():  # runs the entire simulation
                  
         for j in pop_list:  # runs through each member of population
             if j.color() == ("red","red"):  
-                
+                    print (j.mortality)
                     for k in pop_list:   # compares each infected individual to each member of the population
                         infected,susceptible = infect_if_exposed(infected,susceptible,Mortality_after_infection,Mortality_after_vaccination,Mortality_after_infection_and_vaccination,infection_distance,j,k)
                         
@@ -318,5 +316,4 @@ def run_simulation():  # runs the entire simulation
         
     plot_graph(sim_log, infected_log, susceptible_log, recovered_log,vaccinated_log,dead_log)
     wn.mainloop()  # causes program to only terminate when window closes
-    
     
